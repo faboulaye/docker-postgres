@@ -2,5 +2,5 @@ sudo: required
 services:
   - docker
 script:
-  - docker build -t faboulaye/postgres  -f full/Dockerfile --rm .
-  - docker build -t faboulaye/postgres:slim  -f min/Dockerfile --rm .
+  - docker build -t faboulaye/postgres  -f full/Dockerfile --rm full/
+  - docker build -t faboulaye/postgres:slim  -f min/Dockerfile --rm min/
