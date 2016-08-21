@@ -1,4 +1,4 @@
-# Postgres
+# Postgres [![Build Status](https://travis-ci.org/faboulaye/docker-postgres.svg?branch=master)](https://travis-ci.org/faboulaye/docker-postgres)
 
 * Postgres with debian : [postgres/debian](https://github.com/faboulaye/docker-postgres/blob/master/full/Dockerfile) [![](https://images.microbadger.com/badges/image/faboulaye/postgres.svg)](https://microbadger.com/images/faboulaye/postgres "Get your own image badge on microbadger.com")
 

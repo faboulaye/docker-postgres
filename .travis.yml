@@ -1,0 +1,6 @@
+sudo: required
+services:
+  - docker
+script:
+  - docker build -t faboulaye/postgres  -f full/Dockerfile --rm .
+  - docker build -t faboulaye/postgres:slim  -f min/Dockerfile --rm .
