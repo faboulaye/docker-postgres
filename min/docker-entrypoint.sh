@@ -1,9 +1,9 @@
 #!/bin/sh
-chown -R postgres "$PG_DATA"
+set -e
 
-if [ -z "$(ls -A "$PG_DATA")" ]; then
-    gosu postgres initdb
-    sed -ri "s/^#(listen_addresses\s*=\s*)\S+/\1'*'/" "$PG_DATA"/postgresql.conf
+if [ -z "$(ls -A "$PGDATA")" ]; then
+    initdb
+    sed -ri "s/^#(listen_addresses\s*=\s*)\S+/\1'*'/" "$PGDATA"/postgresql.conf
 
     : ${PG_USER:="postgres"}
     : ${PG_DB_NAME:=$PG_USER}
@@ -18,12 +18,13 @@ if [ -z "$(ls -A "$PG_DATA")" ]; then
       pass=
       authMethod=trust
     fi
-    echo
 
+    { echo; echo "host all all 0.0.0.0/0 $authMethod"; } >> "$PGDATA"/pg_hba.conf
+    chown postgres:postgres $PGDATA/pg_hba.conf
 
     if [ "$PG_DB_NAME" != 'postgres' ]; then
       createSql="CREATE DATABASE $PG_DB_NAME;"
-      echo $createSql | gosu postgres postgres --single -jE
+      echo $createSql | postgres --single -jE
       echo
     fi
 
@@ -34,14 +35,10 @@ if [ -z "$(ls -A "$PG_DATA")" ]; then
     fi
 
     userSql="$op USER $PG_USER WITH SUPERUSER $pass;"
-    echo $userSql | gosu postgres postgres --single -jE
+    echo $userSql | postgres --single -jE
     echo
 
-    # internal start of server in order to allow set-up using psql-client
-    # does not listen on TCP/IP and waits until start finishes
-    gosu postgres pg_ctl -D "$PG_DATA" \
-        -o "-c listen_addresses=''" \
-        -w start
+    pg_ctl -D "$PGDATA" -o "-c listen_addresses=''" -w start
 
     echo
     for f in /docker-entrypoint-initdb.d/*; do
@@ -53,9 +50,7 @@ if [ -z "$(ls -A "$PG_DATA")" ]; then
         echo
     done
 
-    gosu postgres pg_ctl -D "$PG_DATA" -m fast -w stop
-
-    { echo; echo "host all all 0.0.0.0/0 $authMethod"; } >> "$PG_DATA"/pg_hba.conf
+    pg_ctl -D "$PGDATA" -m fast -w stop
+    echo 'PostgreSQL initialize successfully !!!'
 fi
-
-exec gosu postgres "$@"
+postgres

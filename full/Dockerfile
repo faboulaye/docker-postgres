@@ -13,19 +13,19 @@ ENV PATH $PG_HOME/bin:$PATH
 LABEL version = "1.0"
 LABEL description = "PostgreSQL Server $PG_VERSION"
 
-# Install
+COPY docker-entrypoint.sh /
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive \
   && apt-get install --no-install-recommends -y python-software-properties \
     software-properties-common postgresql-$PG_VERSION \
     postgresql-contrib-$PG_VERSION postgresql-client-$PG_VERSION \
+  && chmod a+x docker-entrypoint.sh \
   && apt-get clean \
   && rm -rf /tmp/* /usr/share/man/?? /usr/share/man/??_* /var/lib/apt/lists/*
 
 USER postgres
-COPY docker-entrypoint.sh /
 VOLUME	["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 EXPOSE 5432/tcp
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD postgres -D $PG_HOME/main -c config_file=$PG_HOME/main/postgresql.conf
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+# postgres -D $PG_HOME/main -c config_file=$PG_HOME/main/postgresql.conf
+CMD ["bash"]

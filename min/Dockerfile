@@ -7,23 +7,19 @@ ENV PG_PASSWORD postgres_pwd
 ENV PG_DB_NAME postgres_db
 ENV PG_ENCODING SQL_ASCII
 ENV LANG en_US.utf8
-ENV PG_DATA /var/lib/postgresql/data
+ENV PGDATA /var/lib/postgresql/data
+ENV INITDB /docker-entrypoint-initdb.d
 
 COPY docker-entrypoint.sh /
 
 RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-  && apk update \
-  && apk add curl "postgresql@edge<9.6" "postgresql-contrib@edge<9.6" \
-  && mkdir /docker-entrypoint-initdb.d \
-  && curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
-  && chmod +x /usr/local/bin/gosu /docker-entrypoint.sh \
-  && apk del curl \
+  && apk add --update postgresql \
+  && mkdir -p $INITDB $PGDATA \
+  && chmod +x docker-entrypoint.sh \
+  && chown -R postgres:postgres "$PGDATA" \
   && rm -rf /var/cache/apk/*
 
-VOLUME /var/lib/postgresql/data
-
+USER postgres
+VOLUME $PGDATA
 EXPOSE 5432
-
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["postgres"]
