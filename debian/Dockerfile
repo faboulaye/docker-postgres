@@ -7,6 +7,7 @@ ENV PG_PASSWORD postgres_pwd
 ENV PG_DB_NAME postgres_db
 ENV PG_ENCODING SQL_ASCII
 ENV PG_HOME /usr/lib/postgresql/$PG_VERSION
+ENV PGDATA /var/lib/postgresql/$PG_VERSION/data
 ENV PATH $PG_HOME/bin:$PATH
 
 # Container infos
@@ -25,7 +26,6 @@ RUN apt-get update \
 
 USER postgres
 VOLUME	["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
-EXPOSE 5432/tcp
+EXPOSE 5432
 # ENTRYPOINT ["/docker-entrypoint.sh"]
-# postgres -D $PG_HOME/main -c config_file=$PG_HOME/main/postgresql.conf
-CMD ["bash"]
+# CMD ["postgres"]
