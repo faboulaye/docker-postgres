@@ -8,9 +8,12 @@ echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
 pg_ctl -D $PGDATA -l var/log/postgresql/postgresql-$PG_VERSION-main.log start
 
 if [ "$PG_DB" != 'postgres' ]; then
-  createSql="CREATE DATABASE $PG_DB;"
-  echo $createSql | postgres --single -jE
-  echo
+  if psql -lqt | cut -d \| -f 1 | grep -qw <db_name>; then
+    echo "Database already exist !!!"
+  else
+    createSql="CREATE DATABASE $PG_DB ENCODING = $PG_ENCODING;"
+    echo $createSql | postgres --single -jE
+    echo
 fi
 
 if [ "$PG_USER" != 'postgres' ]; then
