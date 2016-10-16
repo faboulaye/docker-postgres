@@ -31,4 +31,6 @@ RUN apt-get update \
 USER postgres
 VOLUME	["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 EXPOSE 5432
-# ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["bash"]
