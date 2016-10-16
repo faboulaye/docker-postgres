@@ -38,6 +38,7 @@ for f in $INITDB/*; do
     echo
 done
 
-echo 'PostgreSQL init process complete; ready for start up.'
+pg_ctl -D "$PGDATA" -m fast -w stop
 
+echo 'PostgreSQL init process complete; ready for start up.'
 postgres
