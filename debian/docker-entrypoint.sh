@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-initdb -D $PGDATA
+initdb -D $PGDATA -E $PG_ENCODING
 
 echo "host all  all    0.0.0.0/0  md5" >> $PGDATA/pg_hba.conf
 echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
@@ -11,7 +11,7 @@ if [ "$PG_DB" != 'postgres' ]; then
   if psql -lqt | cut -d \| -f 1 | grep -qw $PG_DB; then
     echo "Database already exist !!!"
   else
-    createSql="CREATE DATABASE $PG_DB"
+    createSql="CREATE DATABASE $PG_DB ENCODING $PG_ENCODING"
     echo $createSql | psql postgres
     echo
   fi
