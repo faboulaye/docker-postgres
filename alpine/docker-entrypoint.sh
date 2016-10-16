@@ -23,12 +23,13 @@ if [ -z "$(ls -A "$PGDATA")" ]; then
     chown postgres:postgres $PGDATA/pg_hba.conf
 
     if [ "$PG_DB" != 'postgres' ]; then
-      if psql -lqt | cut -d \| -f 1 | grep -qw <db_name>; then
+      if psql -lqt | cut -d \| -f 1 | grep -qw $PG_DB; then
         echo "Database already exist !!!"
       else
         createSql="CREATE DATABASE $PG_DB ENCODING $PG_ENCODING;"
         echo $createSql | postgres --single -jE
         echo
+      fi
     fi
 
     if [ "$PG_USER" != 'postgres' ]; then
