@@ -6,7 +6,7 @@ if [ -z "$(ls -A "$PGDATA")" ]; then
     sed -ri "s/^#(listen_addresses\s*=\s*)\S+/\1'*'/" "$PGDATA"/postgresql.conf
 
     : ${PG_USER:="postgres"}
-    : ${PG_DB_NAME:=$PG_USER}
+    : ${PG_DB:=$PG_USER}
 
     if [ "$PG_PASSWORD" ]; then
       pass="PASSWORD '$PG_PASSWORD'"
@@ -22,8 +22,8 @@ if [ -z "$(ls -A "$PGDATA")" ]; then
     { echo; echo "host all all 0.0.0.0/0 $authMethod"; } >> "$PGDATA"/pg_hba.conf
     chown postgres:postgres $PGDATA/pg_hba.conf
 
-    if [ "$PG_DB_NAME" != 'postgres' ]; then
-      createSql="CREATE DATABASE $PG_DB_NAME;"
+    if [ "$PG_DB" != 'postgres' ]; then
+      createSql="CREATE DATABASE $PG_DB;"
       echo $createSql | postgres --single -jE
       echo
     fi
@@ -34,7 +34,8 @@ if [ -z "$(ls -A "$PGDATA")" ]; then
       op=ALTER
     fi
 
-    userSql="$op USER $PG_USER WITH SUPERUSER $pass;"
+    userSql="$op USER $PG_USER WITH SUPERUSER PASSWORD '$PG_PASSWORD'; \
+    GRANT ALL PRIVILEGES ON DATABASE $PG_DB TO $PG_USER;"
     echo $userSql | postgres --single -jE
     echo
 
@@ -44,7 +45,7 @@ if [ -z "$(ls -A "$PGDATA")" ]; then
     for f in /docker-entrypoint-initdb.d/*; do
         case "$f" in
             *.sh)  echo "$0: running $f"; . "$f" ;;
-            *.sql) echo "$0: running $f"; psql --username "$PG_USER" --dbname "$PG_DB_NAME" < "$f" && echo ;;
+            *.sql) echo "$0: running $f"; psql --username "$PG_USER" --dbname "$PG_DB" < "$f" && echo ;;
             *)     echo "$0: ignoring $f" ;;
         esac
         echo

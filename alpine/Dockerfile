@@ -1,10 +1,10 @@
-FROM alpine:3.4
+FROM alpine:edge
 MAINTAINER Firdaws Aboulaye "aboufred@gmail.com"
 
 # Initial default user/pass and schema
 ENV PG_USER postgres_user
 ENV PG_PASSWORD postgres_pwd
-ENV PG_DB_NAME postgres_db
+ENV PG_DB postgres_db
 ENV PG_ENCODING SQL_ASCII
 ENV LANG en_US.utf8
 ENV PGDATA /var/lib/postgresql/data
