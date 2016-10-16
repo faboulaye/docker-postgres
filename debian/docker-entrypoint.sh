@@ -11,7 +11,7 @@ if [ "$PG_DB" != 'postgres' ]; then
   if psql -lqt | cut -d \| -f 1 | grep -qw <db_name>; then
     echo "Database already exist !!!"
   else
-    createSql="CREATE DATABASE $PG_DB ENCODING = $PG_ENCODING;"
+    createSql="CREATE DATABASE $PG_DB ENCODING $PG_ENCODING;"
     echo $createSql | postgres --single -jE
     echo
 fi
