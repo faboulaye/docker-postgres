@@ -7,7 +7,7 @@ ENV PG_PASSWORD postgres_pwd
 ENV PG_DB postgres_db
 ENV PG_ENCODING UTF8
 ENV PG_HOME /usr/lib/postgresql/$PG_VERSION
-ENV PGDATA /var/lib/postgresql/$PG_VERSION/data
+ENV PGDATA /var/lib/postgresql/data
 ENV PATH $PG_HOME/bin:$PATH
 ENV INITDB /docker-entrypoint-initdb.d
 
@@ -25,6 +25,7 @@ RUN apt-get update \
   && apt-get update \
   && apt-get install -y postgresql-$PG_VERSION \
   && mkdir -p $PGDATA \
+  && chmod 700 "$PGDATA" \
   && chown -R postgres "$PGDATA" \
   && chmod +x docker-entrypoint.sh \
   && apt-get clean \
@@ -34,5 +35,3 @@ USER postgres
 VOLUME	$PGDATA
 EXPOSE 5432
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["bash"]

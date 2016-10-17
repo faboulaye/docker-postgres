@@ -5,7 +5,7 @@ initdb -D $PGDATA -E $PG_ENCODING
 echo "host all  all    0.0.0.0/0  md5" >> $PGDATA/pg_hba.conf
 echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
 
-pg_ctl -D $PGDATA -l var/log/postgresql/postgresql-$PG_VERSION-main.log -w start
+pg_ctl -D $PGDATA -l var/log/postgresql/postgres.log -w start
 
 if [ "$PG_DB" != 'postgres' ]; then
   if psql -lqt | cut -d \| -f 1 | grep -qw $PG_DB; then
@@ -37,6 +37,8 @@ for f in $INITDB/*; do
     esac
     echo
 done
+pg_ctl -D $PGDATA -m fast -w stop
 
 echo 'PostgreSQL init process complete; ready for start up.'
-psql postgres
+
+postgres -D $PGDATA
