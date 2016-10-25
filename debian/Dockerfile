@@ -15,7 +15,7 @@ COPY docker-entrypoint.sh /
 
 RUN apt-get update \
   && groupadd -r postgres --gid=1000 \
-  && useradd -r -g postgres --uid=1000 postgres \
+  && useradd -r -g 1000 --uid=1000 postgres \
   && DEBIAN_FRONTEND=noninteractive \
   && apt-get install -y wget apt-utils \
   && echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/postgresql.list \
