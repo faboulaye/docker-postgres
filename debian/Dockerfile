@@ -25,6 +25,7 @@ RUN apt-get update \
   && apt-get update \
   && apt-get install -y postgresql-$PG_VERSION \
   && mkdir -p $PGDATA \
+  && usermod -u 1000 postgres \
   && chmod 700 "$PGDATA" \
   && chown -R postgres "$PGDATA" \
   && chmod +x docker-entrypoint.sh \
