@@ -11,13 +11,11 @@ ENV PGDATA /var/lib/postgresql/data
 ENV PATH $PG_HOME/bin:$PATH
 ENV INITDB /docker-entrypoint-initdb.d
 
-# Container infos
-LABEL version = "1.0"
-LABEL description = "PostgreSQL Server $PG_VERSION"
-
 COPY docker-entrypoint.sh /
 
 RUN apt-get update \
+  && groupadd -r postgres --gid=999 \
+  && useradd -r -g postgres --uid=999 postgres
   && DEBIAN_FRONTEND=noninteractive \
   && apt-get install -y wget apt-utils \
   && echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/postgresql.list \
@@ -25,7 +23,6 @@ RUN apt-get update \
   && apt-get update \
   && apt-get install -y postgresql-$PG_VERSION \
   && mkdir -p $PGDATA \
-  && usermod -u 1000 postgres \
   && chmod 700 "$PGDATA" \
   && chown -R postgres "$PGDATA" \
   && chmod +x docker-entrypoint.sh \
