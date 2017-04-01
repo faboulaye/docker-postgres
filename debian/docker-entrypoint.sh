@@ -2,8 +2,10 @@
 
 initdb -D $PGDATA -E $PG_ENCODING
 
-echo "host all  all    0.0.0.0/0  md5" >> $PGDATA/pg_hba.conf
-echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
+grep "host all  all    0.0.0.0/0  md5" $PGDATA/pg_hba.conf
+ && echo "host all  all    0.0.0.0/0  md5" >> $PGDATA/pg_hba.conf
+grep "listen_addresses='*'" $PGDATA/postgresql.conf
+  && echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
 
 pg_ctl -D $PGDATA -l var/log/postgresql/postgres.log -w start
 
